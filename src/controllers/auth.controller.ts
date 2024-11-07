@@ -1,8 +1,10 @@
-const Code = require("../models/Code.model");
-const { transporter } = require("../configs/mail.config");
-const jwt = require("jsonwebtoken");
+import { RequestHandler } from "express";
+import Code from "../models/Code.model";
+import { transporter } from "../configs/mail.config";
+import jwt from "jsonwebtoken";
+import User from "../models/User.model";
 
-exports.sendCode = async (req, res) => {
+export const sendCode: RequestHandler = async (req, res) => {
   const { email } = req.body;
 
   let verifyCode = Math.floor(Math.random() * 999999) + 1;
@@ -21,7 +23,7 @@ exports.sendCode = async (req, res) => {
       subject: "Verify your email!", // Subject line
       html: `<h1>Code: ${verifyCode}</h1>`, // plain text body
     },
-    function (err) {
+    function (err: Error | null) {
       if (err) console.log(err);
       else console.log("Email was sent successfully");
     }
@@ -33,24 +35,33 @@ exports.sendCode = async (req, res) => {
   });
 };
 
-exports.verifyCode = async (req, res) => {
+export const verifyCode: RequestHandler = async (req, res) => {
   const { email, code } = req.body;
 
   const user = await Code.findOne({ email, code });
 
   if (!user) {
-    return res.status(404).send({ message: "User not found" });
+    res.status(404).send({ message: "User not found" });
   }
 
-  if (user.code !== code) {
-    return res.status(400).send({ message: "Invalid code" });
+  if (user!.code !== code) {
+    res.status(400).send({ message: "Invalid code" });
   }
 
   await Code.deleteOne({ email, code });
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+  const jwtSecret: string | undefined = process.env.JWT_SECRET;
+
+  const token = jwt.sign({ email }, jwtSecret!, {
     expiresIn: "1h",
   });
+
+  const newUser = new User({
+    username: email.split("@")[0],
+    email,
+  });
+
+  await newUser.save();
 
   res.send({
     success: true,
