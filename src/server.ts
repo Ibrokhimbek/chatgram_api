@@ -1,5 +1,6 @@
 import env from "dotenv";
 env.config();
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 // Routes
@@ -9,6 +10,8 @@ import usersRoute from "./routes/users.routes";
 import { createServer } from "http";
 import { Server } from "socket.io";
 const app = express();
+
+app.use(cors());
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
