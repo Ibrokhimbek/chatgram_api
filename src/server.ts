@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/chatgram")
+  .connect(process.env.DB_URL as string)
   .then(() => {
     console.log("Database was connected");
   })
