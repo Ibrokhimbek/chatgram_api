@@ -17,6 +17,10 @@ const io = new Server(httpServer, {});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+  res.send("API is working");
+});
+
 app.use("/auth", authRouter);
 app.use("/users", usersRoute);
 
@@ -33,7 +37,7 @@ mongoose
     console.log("Database connection error: " + err.message);
   });
 
-const PORT = 3000;
+const PORT = 3030;
 httpServer.listen(PORT, () => {
   console.log("Server is running on port: " + PORT);
 });

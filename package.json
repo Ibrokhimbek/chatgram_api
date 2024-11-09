@@ -5,12 +5,14 @@
   "main": "server.js",
   "scripts": {
     "start": "tsc --watch",
-    "dev": "nodemon dist/server.js"
+    "development": "nodemon dist/server.js",
+    "dev": "concurrently \"npm run start\" \"npm run development\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^22.9.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
@@ -23,6 +25,7 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mongoose": "^5.11.97",
-    "@types/nodemailer": "^6.4.16"
+    "@types/nodemailer": "^6.4.16",
+    "concurrently": "^9.1.0"
   }
 }
