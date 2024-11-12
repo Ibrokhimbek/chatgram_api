@@ -1,14 +1,12 @@
-import mongoose, { Model, Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface ICode {
+interface ICode extends Document {
   email: string;
   code: string;
   createdAt: Date;
 }
 
-type CodeModel = Model<ICode>;
-
-const CodeSchema = new Schema<ICode, CodeModel>({
+const CodeSchema = new Schema<ICode>({
   email: {
     type: String,
     validate: {
@@ -32,7 +30,5 @@ const CodeSchema = new Schema<ICode, CodeModel>({
   },
 });
 
-CodeSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3000 });
-
-const Code = mongoose.model<ICode, CodeModel>("Code", CodeSchema);
+const Code = mongoose.model<ICode>("Code", CodeSchema);
 export default Code;

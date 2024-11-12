@@ -1,5 +1,5 @@
 import { sendCode, verifyCode } from "../controllers/auth.controller";
-
+import { errorHandler } from "../utils/errorHandler";
 import { Router } from "express";
 
 const router = Router();
@@ -54,7 +54,7 @@ const router = Router();
  *                   type: string
  *                   example: "Failed to send verification code"
  */
-router.post("/verifyEmail", sendCode);
+router.post("/verifyEmail", errorHandler(sendCode));
 /**
  * @swagger
  * /verifyCode:
@@ -110,6 +110,6 @@ router.post("/verifyEmail", sendCode);
  *                   type: string
  *                   example: "Failed to verify code"
  */
-router.post("/verifyCode", verifyCode);
+router.post("/verifyCode", errorHandler(verifyCode));
 
 export default router;

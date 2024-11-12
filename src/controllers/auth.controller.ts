@@ -42,10 +42,12 @@ export const verifyCode: RequestHandler = async (req, res) => {
 
   if (!verificationCode) {
     res.status(404).send({ message: "Code not found" });
+    return;
   }
 
   if (verificationCode!.code !== code) {
     res.status(400).send({ message: "Invalid code" });
+    return;
   }
 
   // Delete verification code
@@ -67,7 +69,7 @@ export const verifyCode: RequestHandler = async (req, res) => {
   const token: string = jwt.sign({ email }, process.env.JWT_SECRET as string, {
     expiresIn: "1h",
   });
-  
+
   // Sending response
   res.send({
     success: true,
