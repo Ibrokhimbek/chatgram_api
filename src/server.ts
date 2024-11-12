@@ -3,6 +3,9 @@ env.config();
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocs from "./configs/swagger.config";
+
 // Routes
 import authRouter from "./routes/auth.routes";
 import usersRoute from "./routes/users.routes";
@@ -15,6 +18,8 @@ app.use(cors());
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Body parser
 app.use(express.json());

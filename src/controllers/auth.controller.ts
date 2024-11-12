@@ -37,37 +37,43 @@ export const sendCode: RequestHandler = async (req, res) => {
 
 export const verifyCode: RequestHandler = async (req, res) => {
   const { email, code } = req.body;
+  // Finding user from database
+  const verificationCode = await Code.findOne({ email, code });
 
-  const user = await Code.findOne({ email, code });
-
-  if (!user) {
-    res.status(404).send({ message: "User not found" });
+  if (!verificationCode) {
+    res.status(404).send({ message: "Code not found" });
   }
 
-  if (user!.code !== code) {
+  if (verificationCode!.code !== code) {
     res.status(400).send({ message: "Invalid code" });
   }
 
+  // Delete verification code
   await Code.deleteOne({ email, code });
 
-  const jwtSecret: string | undefined = process.env.JWT_SECRET;
+  // Find user from db
+  const user = await User.findOne({ email });
 
-  const token = jwt.sign({ email }, jwtSecret!, {
+  if (!user) {
+    // Creating user
+    const newUser = new User({
+      username: email.split("@")[0],
+      email,
+    });
+    await newUser.save();
+  }
+
+  // Create jwt token
+  const token: string = jwt.sign({ email }, process.env.JWT_SECRET as string, {
     expiresIn: "1h",
   });
-
-  const newUser = new User({
-    username: email.split("@")[0],
-    email,
-  });
-
-  await newUser.save();
-
+  
+  // Sending response
   res.send({
     success: true,
     message: "Code verified successfully",
     data: {
-      token: token,
+      token,
     },
   });
 };
